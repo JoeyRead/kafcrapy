@@ -1,21 +1,19 @@
 from kafka import KafkaConsumer
 from kafka import KafkaProducer
+
 import json
 import time
 
 DEFAULT_CONSUMER = {
     'bootstrap_servers': ['localhost:9092'],
     'auto_offset_reset': 'earliest',
-    # 'value_deserializer': lambda v: der(v),
+    'value_deserializer': lambda v: json.loads(v.decode('utf-8')),
     'enable_auto_commit': True,
     'auto_commit_interval_ms': 100,
-    'group_id': 'my_group'
+    'group_id': 'my_group',
+    'max_poll_records': 1,
+    'max_poll_interval_ms': 3000,
 }
-
-
-def der(v):
-    print("value: ", v)
-    return json.loads(v.decode('utf-8'))
 
 
 DEFAULT_PRODUCER = {
@@ -37,7 +35,8 @@ def consumer_from_settings(settings, topic_name):
 
 def test_producer():
     producer = producer_from_settings({}, DEFAULT_PRODUCER)
-    for x in range(1010, 1020):
+    for x in range(1020, 1100):
+        time.sleep(.1)
         print('producing result: ', x)
         data = {'number': x}
         producer.send('my_topic', value=data)
@@ -45,13 +44,18 @@ def test_producer():
 
 def test_consumer():
     consumer = consumer_from_settings({}, 'my_topic')
-    for message in consumer:
-        time.sleep(.01)
-        print("message: ", message.value)
+    metrics = consumer.metrics()
+    print(metrics)
+    while True:
+        message_batch = consumer.poll(timeout_ms=5000, max_records=5)
+        for partition_batch in message_batch.values():
+            for message in partition_batch:
+                print("message: ", message.value)
+        print("batch processed")
+        time.sleep(1)
 
 
 import sys
-
 if __name__ == "__main__":
     run = sys.argv[1]
     if run == 'producer':
