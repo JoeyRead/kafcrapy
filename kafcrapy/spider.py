@@ -22,7 +22,7 @@ class KafkaSpiderMixin(object):
             raise ValueError("Crawler is required")
 
         if not hasattr(self, 'topic') or not self.topic:
-            raise ValueError('topic is required')
+            raise ValueError('kafka topic is required')
 
         if self.consumer:
             return
@@ -76,4 +76,6 @@ class KafkaSpiderMixin(object):
 class KafkaFeedSpider(KafkaSpiderMixin, Spider):
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
-        pass
+        obj: KafkaFeedSpider = super(KafkaFeedSpider, cls).from_crawler(crawler, *args, **kwargs)
+        obj.setup_kafka_consumer()
+        return obj
