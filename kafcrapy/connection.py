@@ -11,8 +11,8 @@ DEFAULT_CONSUMER = {
     'enable_auto_commit': True,
     'auto_commit_interval_ms': 100,
     'group_id': 'my_group',
-    'max_poll_records': 1,
-    'max_poll_interval_ms': 3000,
+    # 'max_poll_records': 1,
+    # 'max_poll_interval_ms': 3000,
 }
 
 
@@ -27,7 +27,7 @@ def producer_from_settings(settings, topic_name):
     return KafkaProducer(**DEFAULT_PRODUCER)
 
 
-def consumer_from_settings(settings, topic_name):
+def consumer_from_settings(topic_name, settings):
     consumer_settings = settings.get('CONSUMER_SETTINGS', DEFAULT_CONSUMER)
     consumer = KafkaConsumer(topic_name, **consumer_settings)
     return consumer
@@ -43,7 +43,7 @@ def test_producer():
 
 
 def test_consumer():
-    consumer = consumer_from_settings({}, 'my_topic')
+    consumer = consumer_from_settings('my_topic', {})
     metrics = consumer.metrics()
     print(metrics)
     while True:
