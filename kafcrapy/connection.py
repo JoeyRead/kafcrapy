@@ -7,15 +7,18 @@ import time
 DEFAULT_CONSUMER = {
     'bootstrap_servers': ['localhost:9092'],
     'auto_offset_reset': 'earliest',
-    'value_deserializer': lambda v: json.loads(v.decode('utf-8')),
     'enable_auto_commit': True,
     'auto_commit_interval_ms': 5 * 1000,
     'group_id': 'my_group',
     'client_id': 'my_group',
     'max_poll_records': 10,
-    'max_poll_interval_ms': 10 * 1000,
-    'consumer_timeout_ms': 3 * 1000,
+    'max_poll_interval_ms': 60 * 1000,
+    'consumer_timeout_ms': 30 * 1000,
     'session_timeout_ms': 60 * 1000,
+    'request_timeout_ms': 100 * 1000,
+    'heartbeat_interval_ms': 5 * 1000,
+    'key_deserializer': lambda v: json.loads(v.decode('utf-8')) if v else None,
+    'value_deserializer': lambda v: json.loads(v.decode('utf-8')) if v else None,
 }
 
 DEFAULT_PRODUCER = {

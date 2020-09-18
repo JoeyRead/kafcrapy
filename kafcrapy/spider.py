@@ -34,12 +34,12 @@ class KafkaSpiderMixin(object):
         # This will be called just after item has been scraped, reason is to call this not to stop crawler
         self.crawler.signals.connect(self.item_scraped, signal=signals.item_scraped)
 
-    def start_request(self):
+    def start_requests(self):
         return self.next_request()
 
     def next_request(self):
-        print("starting next message_batch")
-        message_batch = self.consumer.poll(timeout_ms=5000, max_records=5)
+        self.logger.info("starting next message_batch")
+        message_batch = self.consumer.poll(timeout_ms=10 * 1000, max_records=10)
         for partition_batch in message_batch.values():
             for message in partition_batch:
                 print("message", message.value)
