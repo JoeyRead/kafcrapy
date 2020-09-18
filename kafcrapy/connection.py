@@ -15,7 +15,7 @@ DEFAULT_CONSUMER = {
     'max_poll_interval_ms': 60 * 1000,
     'consumer_timeout_ms': 30 * 1000,
     'session_timeout_ms': 60 * 1000,
-    'request_timeout_ms': 100 * 1000,
+    'request_timeout_ms': 305 * 1000,
     'heartbeat_interval_ms': 5 * 1000,
     'key_deserializer': lambda v: json.loads(v.decode('utf-8')) if v else None,
     'value_deserializer': lambda v: json.loads(v.decode('utf-8')) if v else None,
