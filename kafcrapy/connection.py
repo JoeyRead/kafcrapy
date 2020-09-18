@@ -9,12 +9,14 @@ DEFAULT_CONSUMER = {
     'auto_offset_reset': 'earliest',
     'value_deserializer': lambda v: json.loads(v.decode('utf-8')),
     'enable_auto_commit': True,
-    'auto_commit_interval_ms': 100,
+    'auto_commit_interval_ms': 5 * 1000,
     'group_id': 'my_group',
-    # 'max_poll_records': 1,
-    # 'max_poll_interval_ms': 3000,
+    'client_id': 'my_group',
+    'max_poll_records': 10,
+    'max_poll_interval_ms': 10 * 1000,
+    'consumer_timeout_ms': 3 * 1000,
+    'session_timeout_ms': 60 * 1000,
 }
-
 
 DEFAULT_PRODUCER = {
     'bootstrap_servers': ['localhost:9092'],
@@ -35,10 +37,10 @@ def consumer_from_settings(topic_name, settings):
 
 def test_producer():
     producer = producer_from_settings({}, DEFAULT_PRODUCER)
-    for x in range(1020, 1100):
+    for x in range(1, 10):
         time.sleep(.1)
         print('producing result: ', x)
-        data = {'number': x}
+        data = {'url': "https://www.thebookofjoel.com/python-kafka-consumers"}
         producer.send('my_topic', value=data)
 
 
@@ -56,6 +58,7 @@ def test_consumer():
 
 
 import sys
+
 if __name__ == "__main__":
     run = sys.argv[1]
     if run == 'producer':

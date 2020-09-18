@@ -38,12 +38,13 @@ class KafkaSpiderMixin(object):
         return self.next_request()
 
     def next_request(self):
+        print("starting next message_batch")
         message_batch = self.consumer.poll(timeout_ms=5000, max_records=5)
         for partition_batch in message_batch.values():
             for message in partition_batch:
                 print("message", message.value)
                 url = self.process_message(message.value)
-                yield self.make_request_from_url(url)
+                yield self.make_requests_from_url(url)
 
     def schedule_next_request(self):
         for req in self.next_request():
