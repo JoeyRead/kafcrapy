@@ -23,23 +23,29 @@ DEFAULT_CONSUMER = {
 
 DEFAULT_PRODUCER = {
     'bootstrap_servers': ['localhost:9092'],
-    'value_serializer': lambda x: json.dumps(x).encode('utf-8')
+    'acks': 1,
+    'retries': 5,
+    'key_serializer': lambda v: json.loads(v.decode('utf-8')) if v else None,
+    'value_serializer': lambda v: json.dumps(v).encode('utf-8') if v else None,
 }
 
 
-def producer_from_settings(settings, topic_name):
-    producer_settings = settings.get('PRODUCER_SETTINGS', DEFAULT_PRODUCER)
-    return KafkaProducer(**DEFAULT_PRODUCER)
+def producer_from_settings(config):
+    if config and isinstance(config, dict):
+        return ValueError("producer_config_error, It should be a dict")
+    new_config = {**DEFAULT_PRODUCER, **config} if config else DEFAULT_PRODUCER
+    return KafkaProducer(**new_config)
 
 
-def consumer_from_settings(topic_name, settings):
-    consumer_settings = settings.get('CONSUMER_SETTINGS', DEFAULT_CONSUMER)
-    consumer = KafkaConsumer(topic_name, **consumer_settings)
-    return consumer
+def consumer_from_settings(topic_name, config):
+    if config and isinstance(config, dict):
+        return ValueError("consumer_config_error, It should be a dict")
+    new_config = {**DEFAULT_CONSUMER, **config} if config else DEFAULT_CONSUMER
+    return KafkaConsumer(topic_name, **new_config)
 
 
 def test_producer():
-    producer = producer_from_settings({}, DEFAULT_PRODUCER)
+    producer = producer_from_settings({})
     for x in range(1, 10):
         time.sleep(.1)
         print('producing result: ', x)
