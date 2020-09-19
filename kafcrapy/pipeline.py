@@ -26,6 +26,7 @@ class KafkaProducerPipeline(object):
         send(self, topic, value=None, key=None, headers=None, partition=None, timestamp_ms=None):
         """
         self.producer.send(topic=self.topic, value=item)
+        return item
 
     @classmethod
     def from_settings(cls, settings):
@@ -39,7 +40,7 @@ class KafkaProducerPipeline(object):
 
     @classmethod
     def from_crawler(cls, crawler):
-        cls.from_settings(crawler.settings)
+        return cls.from_settings(crawler.settings)
 
     def close_spider(self, spider):
         if self.producer:
