@@ -22,7 +22,7 @@ DEFAULT_CONSUMER = {
 }
 
 DEFAULT_PRODUCER = {
-    'bootstrap_servers': ['localhost:9092'],
+    'bootstrap_servers': ['localhost:9092', 'localhost:9093', 'localhost:9094'],
     'acks': 1,
     'retries': 5,
     'key_serializer': lambda v: json.loads(v.decode('utf-8')) if v else None,
