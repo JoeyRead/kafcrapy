@@ -28,7 +28,7 @@ class KafkaSpiderMixin(object):
             return
 
         settings = self.crawler.settings
-        self.consumer = connection.consumer_from_settings(topic_name=self.topic, settings=settings)
+        self.consumer = connection.consumer_from_settings(topic_name=self.topic, config={})
         self.crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
 
         # This will be called just after item has been scraped, reason is to call this not to stop crawler
